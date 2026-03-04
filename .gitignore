@@ -1,0 +1,6 @@
+.env
+idea.txt
+gen_scenes/
+output/
+__pycache__/
+*.pyc
