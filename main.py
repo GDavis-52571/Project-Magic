@@ -60,12 +60,12 @@ def fetch_land_for_color(colors):
 
 
 def download_card_art(url):
-    """Download card art and return as base64 data URI."""
+    """Download card art and return (base64 data URI, raw bytes)."""
     resp = requests.get(url, headers=SCRYFALL_HEADERS)
     resp.raise_for_status()
     b64 = base64.b64encode(resp.content).decode("utf-8")
     content_type = resp.headers.get("Content-Type", "image/jpeg")
-    return f"data:{content_type};base64,{b64}"
+    return f"data:{content_type};base64,{b64}", resp.content
 
 
 def resolve_combat(c1, c2):
@@ -275,8 +275,15 @@ def main():
 
         print("  Downloading card art...")
         art_b64_list = []
-        for card in cards:
-            art_b64_list.append(download_card_art(card["art_crop_url"]))
+        os.makedirs("gen_images", exist_ok=True)
+        labels = ["attacker", "defender", "land"]
+        for card, label in zip(cards, labels):
+            data_uri, raw_bytes = download_card_art(card["art_crop_url"])
+            art_b64_list.append(data_uri)
+            img_path = os.path.join("gen_images", f"{label}.jpg")
+            with open(img_path, "wb") as f:
+                f.write(raw_bytes)
+            print(f"    Saved {label} card art -> {img_path}")
 
         output_path = generate_scene(cards, art_b64_list, outcome)
         print(f"\n  Scene saved to {output_path}")
