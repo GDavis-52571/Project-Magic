@@ -1,4 +1,4 @@
-# Project Magic
+# Project Magic 🧙‍♂️
 
 AI-generated Magic: The Gathering combat scenes. Pulls two random creature cards and a land from Scryfall, simulates combat using power/toughness, then generates an original battle scene using the Grok image API.
 
